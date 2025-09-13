@@ -1,166 +1,141 @@
-# 🚀 Live Server対応 - EEG電極選択ツール
+# EEG Electrode Mapper
 
-**VSCode Live Server拡張機能**で即座に動作するスタンドアロン版
+A browser-based tool for creating custom EEG electrode layouts using the international 10-10 system. Generate high-quality SVG diagrams for research, clinical documentation, and publication.
 
-## ✨ 特徴
+## Features
 
-- **完全スタンドアロン**: JSONファイル読み込み不要
-- **76個の正確な10-10電極名**: P3, F3, Cz, AFzなど
-- **Live Server完全対応**: CORS問題なし
-- **即座に動作開始**: インストール・設定不要
+- **76 standard 10-10 electrodes** with accurate positioning
+- **Interactive electrode selection** with visual head map
+- **12 preset configurations** for common electrode arrangements
+- **High-quality SVG export** with customizable layouts
+- **Region-based color coding** for easy identification
+- **No installation required** - runs directly in web browser
 
-## 🎯 クイックスタート
+## Quick Start
 
-### VSCode + Live Server使用（推奨）
+### Using VSCode Live Server (Recommended)
 
-1. **VSCode拡張機能をインストール**
-   ```
-   Live Server (by Ritwick Dey)
-   ```
+1. Install the Live Server extension in VSCode
+2. Open `eeg_electrode_selector_en.html` in VSCode
+3. Right-click and select "Open with Live Server"
 
-2. **HTMLファイルを開く**
-   ```
-   eeg_electrode_selector_standalone.html
-   ```
-
-3. **Live Serverを起動**
-   - 右クリック → "Open with Live Server"
-   - または右下の「Go Live」ボタン
-
-### その他のWebサーバー
+### Alternative Web Servers
 
 ```bash
-# Python (推奨)
-python -m http.server 5500
+# Python
+python -m http.server 8000
 
 # Node.js
-npx http-server -p 5500
+npx http-server -p 8000
 
 # PHP
-php -S localhost:5500
+php -S localhost:8000
 ```
 
-## 📁 ファイル構成
+## Available Files
 
-### **メインファイル** ⭐
-- **`eeg_electrode_selector_standalone.html`** - Live Server完全対応版
+| File | Description |
+|------|-------------|
+| `eeg_electrode_selector_en.html` | English version with full features |
+| `eeg_electrode_selector_numbered_standalone.html` | Version with numbered electrodes |
+| `eeg_electrode_selector_pdf.html` | PDF-optimized version |
+| `electrode_correction_list_new.json` | Electrode coordinate data |
 
-### 参考データファイル
-- `mapped_electrode_coordinates.json` - 抽出された電極データ（参考用）
+## Usage
 
-## 🎮 使用方法
+### Electrode Selection
+- **Individual Selection**: Click electrodes on the head map
+- **Preset Selection**: Use buttons for common electrode configurations
+- **Search**: Filter electrodes by name or region
 
-### 1. 電極選択
-- **個別選択**: 電極をクリック
-- **プリセット選択**: ボタンで一括選択
-- **検索**: 電極名で絞り込み
+### Available Presets
 
-### 2. プリセット機能
-| プリセット | 電極数 | 説明 |
-|-----------|--------|------|
-| 標準21電極 | 20個 | 基本EEGセット |
-| 運動皮質 | 5個 | C3, C1, Cz, C2, C4 |
-| 前頭部 | ~30個 | Fp, AF, F系 |
-| 中央部 | ~20個 | FC, C系 |
-| 頭頂部 | ~15個 | CP, P系 |
-| 後頭部 | ~20個 | PO, O, I系 |
-| 側頭部 | ~10個 | FT, T, TP系 |
-| 左半球 | ~35個 | 左側電極 |
-| 右半球 | ~35個 | 右側電極 |
-| 正中線 | ~10個 | z系電極 |
-| 全電極 | 76個 | 全て選択 |
+| Preset | Count | Description |
+|--------|-------|-------------|
+| Standard 21 | 20 | Basic clinical EEG set |
+| Motor Cortex | 5 | C3, C1, Cz, C2, C4 |
+| Frontal | ~30 | Fp, AF, F electrodes |
+| Central | ~20 | FC, C electrodes |
+| Parietal | ~15 | CP, P electrodes |
+| Occipital | ~20 | PO, O, I electrodes |
+| Temporal | ~10 | FT, T, TP electrodes |
+| Left Hemisphere | ~35 | Odd-numbered electrodes |
+| Right Hemisphere | ~35 | Even-numbered electrodes |
+| Midline | ~10 | z-line electrodes |
+| All Electrodes | 76 | Complete 10-10 system |
 
-### 3. ダウンロード
-- **高品質SVG**: スケーラブル・印刷可能
-- **完全な配置図**: 鼻・耳マーカー、凡例付き
-- **自動ファイル名**: `EEG_10-10_layout_XXch_timestamp.svg`
+### Export Options
+- **High-quality SVG**: Scalable vector graphics for publications
+- **Complete layout**: Includes nose/ear markers and legend
+- **Automatic naming**: `EEG_10-10_layout_XXch_timestamp.svg`
 
-## 🔧 技術仕様
+## Technical Specifications
 
-### 座標システム
-- **正規化座標**: -1.0 ～ +1.0
-- **原点**: 頭部中心（Cz近辺）
-- **Y軸**: 上が正（鼻方向）
-- **マッピング精度**: 53個が良好（距離<0.1）
+### Coordinate System
+- **Normalized coordinates**: -1.0 to +1.0 range
+- **Origin**: Head center (near Cz)
+- **Y-axis**: Positive toward nose
+- **Mapping accuracy**: 53 electrodes with distance < 0.1
 
-### データ構造
+### Data Structure
 ```javascript
 {
-    "name": "Cz",           // 10-10標準電極名
-    "x": -0.002,            // 正規化X座標
-    "y": 0.078,             // 正規化Y座標
-    "pixel_x": 424,         // 元画像でのピクセル座標
+    "name": "Cz",           // Standard 10-10 electrode name
+    "x": -0.002,            // Normalized X coordinate
+    "y": 0.078,             // Normalized Y coordinate
+    "pixel_x": 424,         // Original pixel coordinates
     "pixel_y": 390,
-    "radius": 22,           // 検出された半径
-    "assignment_distance": 0.078  // マッピング精度
+    "radius": 22,           // Detection radius
+    "assignment_distance": 0.078  // Mapping accuracy
 }
 ```
 
-### ブラウザ対応
-- ✅ Chrome/Edge (推奨)
+### Browser Compatibility
+- ✅ Chrome/Edge (recommended)
 - ✅ Firefox
 - ✅ Safari
-- ⚠️ IE11 (制限あり)
+- ⚠️ Internet Explorer 11 (limited support)
 
-## 🎨 領域別色分け
+## Region Color Coding
 
-| 領域 | 色 | 電極例 |
-|------|----|----|
-| 前頭部 | 🟡 オレンジ | Fp1, AF3, F7, F3, Fz |
-| 中央部 | 🟢 グリーン | FC1, C3, Cz, C4 |
-| 頭頂部 | 🟣 パープル | CP3, P7, P3, Pz |
-| 後頭部 | 🟤 ブラウン | PO3, O1, Oz, I1 |
-| 側頭部 | 🔵 ブルー | FT7, T7, TP7 |
+| Region | Color | Example Electrodes |
+|--------|-------|-------------------|
+| Frontal | Orange | Fp1, AF3, F7, F3, Fz |
+| Central | Green | FC1, C3, Cz, C4 |
+| Parietal | Purple | CP3, P7, P3, Pz |
+| Occipital | Brown | PO3, O1, Oz, I1 |
+| Temporal | Blue | FT7, T7, TP7 |
 
-## 🐛 トラブルシューティング
+## Troubleshooting
 
-### Live Serverが起動しない
-1. VSCodeでHTMLファイルを開いていることを確認
-2. Live Server拡張機能がインストール済みか確認
-3. ポート5500が他のアプリで使用されていないか確認
+### Server Issues
+1. Ensure HTML file is open in VSCode
+2. Verify Live Server extension is installed
+3. Check if port is available (try different port)
 
-### 電極が表示されない
-1. ブラウザコンソール（F12）でエラーを確認
-2. JavaScriptが有効になっているか確認
-3. 別のブラウザで試行
+### Display Problems
+1. Open browser console (F12) to check for errors
+2. Verify JavaScript is enabled
+3. Try a different browser
 
-### SVGダウンロードできない
-1. ポップアップブロッカーを無効化
-2. ダウンロード設定を確認
-3. 別のブラウザで試行
+### Export Issues
+1. Disable popup blockers
+2. Check download settings
+3. Try alternative browser
 
-## 📊 品質保証
+## Quality Assurance
 
-### マッピング精度検証済み
-- **良好**: 53個 (距離<0.1)
-- **要確認**: 4個 (0.1≤距離<0.2)
-- **要修正**: 19個 (距離≥0.2)
+### Mapping Accuracy
+- **Good**: 53 electrodes (distance < 0.1)
+- **Acceptable**: 4 electrodes (0.1 ≤ distance < 0.2)
+- **Needs adjustment**: 19 electrodes (distance ≥ 0.2)
 
-### 主要電極の精度
-- Cz: 距離 0.078 ✅
-- F3: 距離 0.084 ✅
-- P3: 距離 0.085 ✅
-- AFz: 距離 0.078 ✅
+### Key Electrode Accuracy
+- Cz: distance 0.078 ✅
+- F3: distance 0.084 ✅
+- P3: distance 0.085 ✅
+- AFz: distance 0.078 ✅
 
-## 🔄 更新履歴
+## License
 
-### v2.1 - Live Server完全対応版
-- ✅ JSONファイル依存を完全除去
-- ✅ 76電極データをJS内に直接埋め込み
-- ✅ CORSエラー完全解決
-- ✅ インスタント起動対応
-
-### v2.0 - 正確な10-10マッピング版
-- ✅ 画像解析による正確な電極名マッピング
-- ✅ 76個全電極対応
-- ✅ 5領域別色分け
-- ✅ 12種類のプリセット
-
-### v1.0 - 初期版
-- ✅ 基本的な電極選択機能
-- ✅ SVGダウンロード機能
-
----
-
-**🎯 推奨**: `eeg_electrode_selector_standalone.html` をLive Serverで開いてください。
-**⚡ 動作確認済み**: VSCode Live Server v5.7.9
+This project is open source and available for academic and research use.
