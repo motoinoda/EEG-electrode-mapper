@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEG 10-10 電極配置図 選択ツール (番号付きスタンドアロン版)</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .electrode-count {
+            font-size: 1.1em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .control-panel {
+            width: 350px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .electrode-display {
+            flex: 1;
+            text-align: center;
+        }
+
+        .head-container {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            margin: 40px auto 0 auto;
+        }
+
+        .head-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: white;
+            z-index: 2;
+        }
+
+        .head-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid black;
+            border-radius: 50%;
+            background: transparent;
+            z-index: 3;
+        }
+
+        .electrode {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid black;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            color: black;
+            z-index: 10;
+        }
+
+        .electrode:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            z-index: 10;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+
+        .electrode.active {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .nose-marker {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 45px solid transparent;
+            border-right: 45px solid transparent;
+            border-bottom: 90px solid black;
+            z-index: 1;
+        }
+
+        .nose-marker::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: -39px;
+            width: 0;
+            height: 0;
+            border-left: 39px solid transparent;
+            border-right: 39px solid transparent;
+            border-bottom: 78px solid white;
+        }
+
+        .nose-label {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .ear-marker {
+            position: absolute;
+            top: 50%;
+            width: 35px;
+            height: 70px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 0 20px 20px 0;
+            transform: translateY(-50%);
+        }
+
+        .ear-left {
+            left: -40px;
+            border-radius: 20px 0 0 20px;
+            border-right: none;
+        }
+
+        .ear-right {
+            right: -40px;
+            border-left: none;
+        }
+
+        .ear-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .ear-label.left {
+            left: -75px;
+        }
+
+        .ear-label.right {
+            right: -55px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .button {
+            width: 100%;
+            padding: 10px;
+            margin: 3px 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .button.primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: #2980b9;
+        }
+
+        .button.warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .button.warning:hover {
+            background: #e67e22;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+        }
+
+        .selected-count {
+            background: #34495e;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .electrode-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 10px;
+        }
+
+        .electrode-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .electrode-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .electrode-item.highlighted {
+            background-color: #e8f5e8;
+            font-weight: bold;
+        }
+
+        .electrode-item:last-child {
+            border-bottom: none;
+        }
+
+        .electrode-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .correction-notice {
+            background: #f39c12;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .number-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            line-height: 1.1;
+        }
+
+        .electrode-number {
+            color: black;
+            font-weight: normal;
+            font-size: 8px;
+        }
+
+        .electrode-current-name {
+            color: black;
+            margin-top: -2px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .stats {
+            background: #ecf0f1;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            margin-top: 10px;
+        }
+
+        .edit-mode .electrode {
+            cursor: text;
+        }
+
+        .electrode-editor {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            min-width: 300px;
+        }
+
+        .electrode-editor h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .electrode-editor input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .electrode-editor-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .electrode-editor-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .export-area {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .export-area textarea {
+            width: 100%;
+            height: 300px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            resize: vertical;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator" id="statusIndicator">
+        ⚠️ 要修正版 - 電極名確認用
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>EEG 10-10 電極配置図 選択ツール</h1>
+            <div class="electrode-count">番号付きスタンドアロン版 - 電極名手動修正用</div>
+        </div>
+
+        <div class="content">
+            <div class="control-panel">
+                <div class="correction-notice">
+                    この版は電極名修正用です。<br>
+                    各電極に番号（1-75）が表示されています。<br>
+                    修正リスト: electrode_correction_list.csv
+                </div>
+
+                <div class="selected-count">
+                    表示中: <span id="selectedCount">75</span>個の電極
+                </div>
+
+                <div class="control-group">
+                    <h3>番号・名前検索</h3>
+                    <input type="text" id="searchBox" class="search-box" placeholder="番号や名前で検索 (例: 1, 25, Cz, F3)">
+                </div>
+
+                <div class="control-group">
+                    <h3>表示オプション</h3>
+                    <div class="preset-buttons">
+                        <button class="button primary" onclick="showNumbersOnly()">番号のみ</button>
+                        <button class="button primary" onclick="showNamesOnly()">名前のみ</button>
+                        <button class="button primary" onclick="showBoth()">両方表示</button>
+                        <button class="button warning" onclick="highlightRange()">範囲強調</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>電極編集</h3>
+                    <button class="button primary" onclick="toggleEditMode()">編集モード切替</button>
+                    <button class="button warning" onclick="exportCorrectedData()">修正データ出力</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>電極リスト（番号順）</h3>
+                    <div id="electrodeList" class="electrode-list">
+                        番号付き電極リストがここに表示されます
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <strong>使用方法</strong><br>
+                    1. 「編集モード切替」で編集モードをONにする<br>
+                    2. 電極をクリックして名前を直接編集<br>
+                    3. 「修正データ出力」で修正済みデータを出力<br>
+                    4. CSV/JSON形式でデータを保存可能
+                </div>
+            </div>
+
+            <div class="electrode-display">
+                <div class="head-container" id="headContainer">
+                    <div class="nose-marker"></div>
+                    <div class="head-background"></div>
+                    <div class="head-border"></div>
+                    <div class="ear-marker ear-left"></div>
+                    <div class="ear-marker ear-right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 番号付き電極データを直接埋め込み（newJSONファイルの修正された電極名を使用）
+        const electrodeData = [
+            {"name": "Nz", "x": -0.002352941176470588, "y": 0.7588652482269503, "pixel_x": 424, "pixel_y": 102, "radius": 24, "assignment_distance": 0.0589122549305356, "number": 1},
+            {"name": "Fpz", "x": -0.002352941176470588, "y": 0.5981087470449172, "pixel_x": 424, "pixel_y": 170, "radius": 24, "assignment_distance": 0.07814417890736837, "number": 2},
+            {"name": "Fp2", "x": 0.19058823529411764, "y": 0.5697399527186762, "pixel_x": 506, "pixel_y": 182, "radius": 24, "assignment_distance": 0.08547939572034027, "number": 3},
+            {"name": "Fp1", "x": -0.18588235294117647, "y": 0.5650118203309693, "pixel_x": 346, "pixel_y": 184, "radius": 24, "assignment_distance": 0.09158059032505685, "number": 4},
+            {"name": "AF7", "x": -0.3788235294117647, "y": 0.4562647754137116, "pixel_x": 264, "pixel_y": 230, "radius": 22, "assignment_distance": 0.0714516436226779, "number": 5},
+            {"name": "AF8", "x": 0.3788235294117647, "y": 0.4562647754137116, "pixel_x": 586, "pixel_y": 230, "radius": 22, "assignment_distance": 0.0714516436226779, "number": 6},
+            {"name": "AFz", "x": -0.002352941176470588, "y": 0.4231678486997636, "pixel_x": 424, "pixel_y": 244, "radius": 24, "assignment_distance": 0.07320567201748394, "number": 7},
+            {"name": "AF4", "x": 0.22823529411764706, "y": 0.4231678486997636, "pixel_x": 522, "pixel_y": 244, "radius": 24, "assignment_distance": 0.10980004690581141, "number": 8},
+            {"name": "AF3", "x": -0.2235294117647059, "y": 0.41843971631205673, "pixel_x": 330, "pixel_y": 246, "radius": 24, "assignment_distance": 0.10798683900657799, "number": 9},
+            {"name": "F9", "x": -0.68, "y": 0.375886524822695, "pixel_x": 136, "pixel_y": 264, "radius": 24, "assignment_distance": 0.301791175460509, "number": 10},
+            {"name": "F10", "x": 0.6847058823529412, "y": 0.375886524822695, "pixel_x": 716, "pixel_y": 264, "radius": 24, "assignment_distance": 0.3043122430456859, "number": 11},
+            {"name": "F8", "x": 0.5152941176470588, "y": 0.3191489361702128, "pixel_x": 644, "pixel_y": 288, "radius": 24, "assignment_distance": 0.07082009183892829, "number": 12},
+            {"name": "F7", "x": -0.5105882352941177, "y": 0.3144208037825059, "pixel_x": 208, "pixel_y": 290, "radius": 24, "assignment_distance": 0.06528514905112592, "number": 13},
+            {"name": "F6", "x": 0.3976470588235294, "y": 0.2860520094562648, "pixel_x": 594, "pixel_y": 302, "radius": 24, "assignment_distance": 0.04064627954925627, "number": 14},
+            {"name": "F5", "x": -0.39294117647058824, "y": 0.28132387706855794, "pixel_x": 258, "pixel_y": 304, "radius": 24, "assignment_distance": 0.04720193233124959, "number": 15},
+            {"name": "F3", "x": -0.26588235294117646, "y": 0.26713947990543735, "pixel_x": 312, "pixel_y": 310, "radius": 24, "assignment_distance": 0.08405458791058895, "number": 16},
+            {"name": "F4", "x": 0.26588235294117646, "y": 0.26713947990543735, "pixel_x": 538, "pixel_y": 310, "radius": 24, "assignment_distance": 0.08405458791058895, "number": 17},
+            {"name": "F1", "x": -0.12941176470588237, "y": 0.2576832151300236, "pixel_x": 370, "pixel_y": 314, "radius": 24, "assignment_distance": 0.07840148365675953, "number": 18},
+            {"name": "F2", "x": 0.12941176470588237, "y": 0.2576832151300236, "pixel_x": 480, "pixel_y": 314, "radius": 24, "assignment_distance": 0.07840148365675953, "number": 19},
+            {"name": "Fz", "x": 0.002352941176470588, "y": 0.25295508274231676, "pixel_x": 426, "pixel_y": 316, "radius": 24, "assignment_distance": 0.07299301631059109, "number": 20},
+            {"name": "FC10", "x": 0.7694117647058824, "y": 0.13947990543735225, "pixel_x": 752, "pixel_y": 364, "radius": 24, "assignment_distance": 0.23522640291814453, "number": 21},
+            {"name": "FC9", "x": -0.7694117647058824, "y": 0.1347517730496454, "pixel_x": 98, "pixel_y": 366, "radius": 24, "assignment_distance": 0.23245398888601523, "number": 22},
+            {"name": "FC8", "x": 0.6047058823529412, "y": 0.12529550827423167, "pixel_x": 682, "pixel_y": 370, "radius": 24, "assignment_distance": 0.034938410585857074, "number": 23},
+            {"name": "FC7", "x": -0.6047058823529412, "y": 0.12056737588652482, "pixel_x": 168, "pixel_y": 372, "radius": 24, "assignment_distance": 0.03842733382688024, "number": 24},
+            {"name": "FC5", "x": -0.4541176470588235, "y": 0.10638297872340426, "pixel_x": 232, "pixel_y": 378, "radius": 24, "assignment_distance": 0.055375611832949125, "number": 25},
+            {"name": "FC6", "x": 0.4541176470588235, "y": 0.10638297872340426, "pixel_x": 618, "pixel_y": 378, "radius": 24, "assignment_distance": 0.055375611832949125, "number": 26},
+            {"name": "FC3", "x": -0.2988235294117647, "y": 0.09219858156028368, "pixel_x": 298, "pixel_y": 384, "radius": 24, "assignment_distance": 0.0897965162995855, "number": 27},
+            {"name": "FC4", "x": 0.2988235294117647, "y": 0.09219858156028368, "pixel_x": 552, "pixel_y": 384, "radius": 24, "assignment_distance": 0.0897965162995855, "number": 28},
+            {"name": "FC1", "x": -0.15294117647058825, "y": 0.08747044917257683, "pixel_x": 360, "pixel_y": 386, "radius": 24, "assignment_distance": 0.28101867322896146, "number": 29},
+            {"name": "FC2", "x": 0.15294117647058825, "y": 0.08747044917257683, "pixel_x": 490, "pixel_y": 386, "radius": 24, "assignment_distance": 0.26284831958011723, "number": 30},
+            {"name": "FCz", "x": -0.002352941176470588, "y": 0.07801418439716312, "pixel_x": 424, "pixel_y": 390, "radius": 22, "assignment_distance": 0.07804965918781773, "number": 31},
+            {"name": "M1", "x": -0.9294117647058824, "y": -0.07801418439716312, "pixel_x": 30, "pixel_y": 456, "radius": 24, "assignment_distance": null, "number": 32},
+            {"name": "T9", "x": -0.8070588235294117, "y": -0.07801418439716312, "pixel_x": 82, "pixel_y": 456, "radius": 24, "assignment_distance": 0.2974709752786724, "number": 33},
+            {"name": "T7", "x": -0.6470588235294118, "y": -0.07801418439716312, "pixel_x": 150, "pixel_y": 456, "radius": 24, "assignment_distance": 0.09838111333561148, "number": 34},
+            {"name": "C5", "x": -0.4823529411764706, "y": -0.07801418439716312, "pixel_x": 220, "pixel_y": 456, "radius": 24, "assignment_distance": 0.05639246181802764, "number": 35},
+            {"name": "C3", "x": -0.32235294117647056, "y": -0.07801418439716312, "pixel_x": 288, "pixel_y": 456, "radius": 24, "assignment_distance": 0.0887692773061274, "number": 36},
+            {"name": "C1", "x": -0.15764705882352942, "y": -0.07801418439716312, "pixel_x": 358, "pixel_y": 456, "radius": 24, "assignment_distance": 0.07998519645706746, "number": 37},
+            {"name": "Cz", "x": -0.002352941176470588, "y": -0.07801418439716312, "pixel_x": 424, "pixel_y": 456, "radius": 22, "assignment_distance": 0.42949763664957435, "number": 38},
+            {"name": "C2", "x": 0.1623529411764706, "y": -0.07801418439716312, "pixel_x": 494, "pixel_y": 456, "radius": 24, "assignment_distance": 0.08115335449871018, "number": 39},
+            {"name": "C4", "x": 0.32235294117647056, "y": -0.07801418439716312, "pixel_x": 562, "pixel_y": 456, "radius": 24, "assignment_distance": 0.0887692773061274, "number": 40},
+            {"name": "C6", "x": 0.4823529411764706, "y": -0.07801418439716312, "pixel_x": 630, "pixel_y": 456, "radius": 24, "assignment_distance": 0.05639246181802764, "number": 41},
+            {"name": "T8", "x": 0.6423529411764706, "y": -0.07801418439716312, "pixel_x": 698, "pixel_y": 456, "radius": 24, "assignment_distance": 0.09523574392717284, "number": 42},
+            {"name": "T10", "x": 0.8070588235294117, "y": -0.07801418439716312, "pixel_x": 768, "pixel_y": 456, "radius": 24, "assignment_distance": 0.2974709752786724, "number": 43},
+            {"name": "M2", "x": 0.9294117647058824, "y": -0.07801418439716312, "pixel_x": 820, "pixel_y": 456, "radius": 24, "assignment_distance": null, "number": 44},
+            {"name": "CPz", "x": -0.002352941176470588, "y": -0.23877068557919623, "pixel_x": 424, "pixel_y": 524, "radius": 22, "assignment_distance": 0.05881776785656419, "number": 45},
+            {"name": "CP1", "x": -0.14823529411764705, "y": -0.25295508274231676, "pixel_x": 362, "pixel_y": 530, "radius": 22, "assignment_distance": 0.07341841844620761, "number": 46},
+            {"name": "CP2", "x": 0.15294117647058825, "y": -0.25295508274231676, "pixel_x": 490, "pixel_y": 530, "radius": 24, "assignment_distance": 0.0740939818499532, "number": 47},
+            {"name": "CP3", "x": -0.2988235294117647, "y": -0.2576832151300236, "pixel_x": 298, "pixel_y": 532, "radius": 24, "assignment_distance": 0.07993126529996321, "number": 48},
+            {"name": "CP4", "x": 0.2988235294117647, "y": -0.2576832151300236, "pixel_x": 552, "pixel_y": 532, "radius": 24, "assignment_distance": 0.07993126529996321, "number": 49},
+            {"name": "CP5", "x": -0.44941176470588234, "y": -0.2718676122931442, "pixel_x": 234, "pixel_y": 538, "radius": 22, "assignment_distance": 0.05511226739643619, "number": 50},
+            {"name": "CP6", "x": 0.4541176470588235, "y": -0.2718676122931442, "pixel_x": 618, "pixel_y": 538, "radius": 24, "assignment_distance": 0.05082698868536241, "number": 51},
+            {"name": "TP7", "x": -0.6, "y": -0.2907801418439716, "pixel_x": 170, "pixel_y": 546, "radius": 24, "assignment_distance": 0.04542047961893891, "number": 52},
+            {"name": "TP8", "x": 0.6047058823529412, "y": -0.2907801418439716, "pixel_x": 682, "pixel_y": 546, "radius": 22, "assignment_distance": 0.047680190767779206, "number": 53},
+            {"name": "TP9", "x": -0.7647058823529411, "y": -0.30023640661938533, "pixel_x": 100, "pixel_y": 550, "radius": 24, "assignment_distance": 0.3760227695268266, "number": 54},
+            {"name": "TP10", "x": 0.7694117647058824, "y": -0.30023640661938533, "pixel_x": 752, "pixel_y": 550, "radius": 24, "assignment_distance": 0.38034137191315937, "number": 55},
+            {"name": "Pz", "x": -0.002352941176470588, "y": -0.41843971631205673, "pixel_x": 424, "pixel_y": 600, "radius": 24, "assignment_distance": 0.06848015114655295, "number": 56},
+            {"name": "P1", "x": -0.12470588235294118, "y": -0.4231678486997636, "pixel_x": 372, "pixel_y": 602, "radius": 24, "assignment_distance": 0.07474920814265243, "number": 57},
+            {"name": "P2", "x": 0.12941176470588237, "y": -0.4231678486997636, "pixel_x": 480, "pixel_y": 602, "radius": 24, "assignment_distance": 0.07392999939128296, "number": 58},
+            {"name": "P3", "x": -0.2611764705882353, "y": -0.4326241134751773, "pixel_x": 314, "pixel_y": 606, "radius": 24, "assignment_distance": 0.08474119061633813, "number": 59},
+            {"name": "P4", "x": 0.2611764705882353, "y": -0.4326241134751773, "pixel_x": 536, "pixel_y": 606, "radius": 24, "assignment_distance": 0.08474119061633813, "number": 60},
+            {"name": "P5", "x": -0.39294117647058824, "y": -0.4515366430260047, "pixel_x": 258, "pixel_y": 614, "radius": 24, "assignment_distance": 0.05707951133594193, "number": 61},
+            {"name": "P6", "x": 0.3976470588235294, "y": -0.4515366430260047, "pixel_x": 594, "pixel_y": 614, "radius": 24, "assignment_distance": 0.052375487793588714, "number": 62},
+            {"name": "P7", "x": -0.5105882352941177, "y": -0.4846335697399527, "pixel_x": 208, "pixel_y": 628, "radius": 24, "assignment_distance": 0.18791072523680571, "number": 63},
+            {"name": "P8", "x": 0.5058823529411764, "y": -0.4846335697399527, "pixel_x": 640, "pixel_y": 628, "radius": 24, "assignment_distance": 0.18568788552846593, "number": 64},
+            {"name": "P9", "x": -0.68, "y": -0.541371158392435, "pixel_x": 136, "pixel_y": 652, "radius": 24, "assignment_distance": null, "number": 65},
+            {"name": "P10", "x": 0.6847058823529412, "y": -0.541371158392435, "pixel_x": 716, "pixel_y": 652, "radius": 24, "assignment_distance": null, "number": 66},
+            {"name": "PO3", "x": -0.2235294117647059, "y": -0.5886524822695035, "pixel_x": 330, "pixel_y": 672, "radius": 24, "assignment_distance": 0.061448959951315926, "number": 67},
+            {"name": "POz", "x": -0.002352941176470588, "y": -0.5886524822695035, "pixel_x": 424, "pixel_y": 672, "radius": 22, "assignment_distance": 0.06869279186307994, "number": 68},
+            {"name": "PO4", "x": 0.2235294117647059, "y": -0.5886524822695035, "pixel_x": 520, "pixel_y": 672, "radius": 22, "assignment_distance": 0.061448959951315926, "number": 69},
+            {"name": "PO7", "x": -0.37411764705882355, "y": -0.6217494089834515, "pixel_x": 266, "pixel_y": 686, "radius": 24, "assignment_distance": 0.08188294018959694, "number": 70},
+            {"name": "PO8", "x": 0.3788235294117647, "y": -0.6217494089834515, "pixel_x": 586, "pixel_y": 686, "radius": 21, "assignment_distance": 0.08339035221289087, "number": 71},
+            {"name": "O1", "x": -0.18588235294117647, "y": -0.735224586288416, "pixel_x": 346, "pixel_y": 734, "radius": 24, "assignment_distance": 0.23490371225442375, "number": 72},
+            {"name": "O2", "x": 0.18588235294117647, "y": -0.735224586288416, "pixel_x": 504, "pixel_y": 734, "radius": 24, "assignment_distance": 0.23490371225442375, "number": 73},
+            {"name": "Oz", "x": -0.002352941176470588, "y": -0.7588652482269503, "pixel_x": 424, "pixel_y": 744, "radius": 24, "assignment_distance": 0.0589122549305356, "number": 74},
+            {"name": "Iz", "x": -0.002352941176470588, "y": -0.9290780141843972, "pixel_x": 424, "pixel_y": 816, "radius": 24, "assignment_distance": null, "number": 75}
+        ];
+
+        let displayMode = 'both'; // 'numbers', 'names', 'both'
+        let editMode = false;
+        let currentEditingElectrode = null;
+
+        function initializeApplication() {
+            console.log('番号付き電極データ読み込み完了:', electrodeData.length, '個');
+
+            initializeElectrodes();
+            updateElectrodeList();
+
+            // 成功メッセージ
+            const status = document.getElementById('statusIndicator');
+            status.textContent = '✅ 番号付きデータ読み込み完了';
+            status.style.background = '#27ae60';
+            setTimeout(() => {
+                status.style.opacity = '0.7';
+            }, 3000);
+        }
+
+        function initializeElectrodes() {
+            const container = document.getElementById('headContainer');
+
+            // 既存の電極を削除
+            container.querySelectorAll('.electrode').forEach(el => el.remove());
+
+            electrodeData.forEach(electrode => {
+                const div = document.createElement('div');
+                div.className = 'electrode';
+                div.id = `electrode-${electrode.number}`;
+
+                // 座標を画像座標系に変換（-1〜1 を 0〜700 に変換、スケールを拡大）
+                // 電極1,33,43,75が円周上に来るように大幅にスケール拡大
+                const scale = 400; // スケールを拡大して電極を円の端まで広げる
+                const centerOffset = 0; // 中心座標はずらさない
+                const x = electrode.x * scale + 350; // 中心を350pxに固定
+                const y = -electrode.y * scale + 350 - 30; // 中心を350px-30pxに固定
+
+                div.style.left = x + 'px';
+                div.style.top = y + 'px';
+
+                // 番号と名前を表示するコンテンツ
+                updateElectrodeContent(div, electrode);
+
+                div.title = `#${electrode.number}: ${electrode.name} (${electrode.x.toFixed(3)}, ${electrode.y.toFixed(3)})`;
+
+                div.onclick = () => {
+                    if (editMode) {
+                        openElectrodeEditor(electrode);
+                    } else {
+                        highlightElectrode(electrode.number);
+                    }
+                };
+
+                container.appendChild(div);
+            });
+
+            // 検索機能
+            const searchBox = document.getElementById('searchBox');
+            searchBox.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                electrodeData.forEach(electrode => {
+                    const element = document.getElementById(`electrode-${electrode.number}`);
+                    const matchesNumber = electrode.number.toString().includes(searchTerm);
+                    const matchesName = electrode.name.toLowerCase().includes(searchTerm);
+
+                    if (matchesNumber || matchesName || !searchTerm) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                        element.style.zIndex = '5';
+                    } else {
+                        element.style.opacity = '0.3';
+                        element.style.transform = 'translate(-50%, -50%) scale(1)';
+                        element.style.zIndex = '1';
+                    }
+                });
+            });
+        }
+
+        function updateElectrodeContent(div, electrode) {
+            const content = document.createElement('div');
+            content.className = 'number-display';
+
+            if (displayMode === 'numbers') {
+                content.innerHTML = `<span class="electrode-number">${electrode.number}</span>`;
+            } else if (displayMode === 'names') {
+                content.innerHTML = `<span class="electrode-current-name">${electrode.name}</span>`;
+            } else { // both
+                content.innerHTML = `
+                    <span class="electrode-number">${electrode.number}</span>
+                    <span class="electrode-current-name">${electrode.name}</span>
+                `;
+            }
+
+            div.innerHTML = '';
+            div.appendChild(content);
+        }
+
+        function showNumbersOnly() {
+            displayMode = 'numbers';
+            updateAllElectrodeContents();
+        }
+
+        function showNamesOnly() {
+            displayMode = 'names';
+            updateAllElectrodeContents();
+        }
+
+        function showBoth() {
+            displayMode = 'both';
+            updateAllElectrodeContents();
+        }
+
+        function updateAllElectrodeContents() {
+            electrodeData.forEach(electrode => {
+                const element = document.getElementById(`electrode-${electrode.number}`);
+                updateElectrodeContent(element, electrode);
+            });
+        }
+
+        function highlightElectrode(number) {
+            // 全電極のハイライトを解除
+            document.querySelectorAll('.electrode').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // 指定電極をハイライト
+            const element = document.getElementById(`electrode-${number}`);
+            element.classList.add('active');
+
+            // リストでも該当項目を強調
+            updateElectrodeList(number);
+        }
+
+        function highlightRange() {
+            const start = prompt('開始番号を入力してください (1-75):');
+            const end = prompt('終了番号を入力してください (1-75):');
+
+            if (start && end) {
+                const startNum = parseInt(start);
+                const endNum = parseInt(end);
+
+                document.querySelectorAll('.electrode').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                for (let i = startNum; i <= endNum && i <= 75; i++) {
+                    const element = document.getElementById(`electrode-${i}`);
+                    if (element) {
+                        element.classList.add('active');
+                    }
+                }
+            }
+        }
+
+        function updateElectrodeList(highlightNumber = null) {
+            const listContainer = document.getElementById('electrodeList');
+            listContainer.innerHTML = '';
+
+            electrodeData.forEach(electrode => {
+                const item = document.createElement('div');
+                item.className = 'electrode-item';
+                if (highlightNumber === electrode.number) {
+                    item.classList.add('highlighted');
+                }
+
+                item.innerHTML = `
+                    <span class="electrode-name">#${electrode.number}: ${electrode.name}</span>
+                    <span style="font-size: 9px; color: #7f8c8d;">(${electrode.x.toFixed(2)}, ${electrode.y.toFixed(2)})</span>
+                `;
+
+                item.onclick = () => highlightElectrode(electrode.number);
+                listContainer.appendChild(item);
+            });
+
+            // ハイライトされた項目をスクロールして表示
+            if (highlightNumber) {
+                const highlightedItem = listContainer.querySelector('.highlighted');
+                if (highlightedItem) {
+                    highlightedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        // 編集モード切り替え
+        function toggleEditMode() {
+            editMode = !editMode;
+            const body = document.body;
+            const button = event.target;
+
+            if (editMode) {
+                body.classList.add('edit-mode');
+                button.textContent = '編集モード：ON';
+                button.style.background = '#e74c3c';
+                showMessage('編集モードがONになりました。電極をクリックして名前を編集できます。');
+            } else {
+                body.classList.remove('edit-mode');
+                button.textContent = '編集モード：OFF';
+                button.style.background = '#3498db';
+                showMessage('編集モードがOFFになりました。');
+            }
+        }
+
+        // 電極編集ダイアログを開く
+        function openElectrodeEditor(electrode) {
+            currentEditingElectrode = electrode;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.onclick = closeElectrodeEditor;
+
+            const editor = document.createElement('div');
+            editor.className = 'electrode-editor';
+            editor.innerHTML = `
+                <h3>電極 #${electrode.number} の名前を編集</h3>
+                <p>座標: (${electrode.x.toFixed(3)}, ${electrode.y.toFixed(3)})</p>
+                <label>現在の名前:</label>
+                <input type="text" id="electrodeNameInput" value="${electrode.name}" placeholder="電極名を入力">
+                <div class="electrode-editor-buttons">
+                    <button class="save-btn" onclick="saveElectrodeName()">保存</button>
+                    <button class="cancel-btn" onclick="closeElectrodeEditor()">キャンセル</button>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(editor);
+
+            // フォーカスを当てる
+            setTimeout(() => {
+                document.getElementById('electrodeNameInput').select();
+            }, 100);
+        }
+
+        // 電極名を保存
+        function saveElectrodeName() {
+            if (!currentEditingElectrode) return;
+
+            const newName = document.getElementById('electrodeNameInput').value.trim();
+            if (newName && newName !== currentEditingElectrode.name) {
+                // データを更新
+                currentEditingElectrode.name = newName;
+
+                // 表示を更新
+                const element = document.getElementById(`electrode-${currentEditingElectrode.number}`);
+                updateElectrodeContent(element, currentEditingElectrode);
+
+                // リストも更新
+                updateElectrodeList();
+
+                showMessage(`電極 #${currentEditingElectrode.number} の名前を「${newName}」に変更しました。`);
+            }
+
+            closeElectrodeEditor();
+        }
+
+        // 編集ダイアログを閉じる
+        function closeElectrodeEditor() {
+            const overlay = document.querySelector('.overlay');
+            const editor = document.querySelector('.electrode-editor');
+            if (overlay) overlay.remove();
+            if (editor) editor.remove();
+            currentEditingElectrode = null;
+        }
+
+        // 修正データを出力
+        function exportCorrectedData() {
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.onclick = closeExportArea;
+
+            // CSV形式のデータを生成
+            let csvData = 'number,current_name,x,y,correct_name\n';
+            electrodeData.forEach(electrode => {
+                csvData += `${electrode.number},${electrode.name},${electrode.x},${electrode.y},${electrode.name}\n`;
+            });
+
+            // JSON形式のデータも生成
+            const jsonData = JSON.stringify(electrodeData, null, 2);
+
+            const exportArea = document.createElement('div');
+            exportArea.className = 'export-area';
+            exportArea.innerHTML = `
+                <h3>修正済みデータの出力</h3>
+                <div style="margin-bottom: 15px;">
+                    <button class="button primary" onclick="showCSVFormat()">CSV形式</button>
+                    <button class="button primary" onclick="showJSONFormat()">JSON形式</button>
+                    <button class="button warning" onclick="closeExportArea()">閉じる</button>
+                </div>
+                <div>
+                    <label><strong>データ形式:</strong> <span id="formatLabel">CSV</span></label>
+                    <textarea id="exportData">${csvData}</textarea>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    上記のデータをコピーして、CSVファイルまたはJSONファイルとして保存してください。
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(exportArea);
+        }
+
+        function showCSVFormat() {
+            let csvData = 'number,current_name,x,y,correct_name\n';
+            electrodeData.forEach(electrode => {
+                csvData += `${electrode.number},${electrode.name},${electrode.x},${electrode.y},${electrode.name}\n`;
+            });
+            document.getElementById('exportData').value = csvData;
+            document.getElementById('formatLabel').textContent = 'CSV';
+        }
+
+        function showJSONFormat() {
+            const jsonData = JSON.stringify(electrodeData, null, 2);
+            document.getElementById('exportData').value = jsonData;
+            document.getElementById('formatLabel').textContent = 'JSON';
+        }
+
+        function closeExportArea() {
+            const overlay = document.querySelector('.overlay');
+            const exportArea = document.querySelector('.export-area');
+            if (overlay) overlay.remove();
+            if (exportArea) exportArea.remove();
+        }
+
+        // メッセージ表示
+        function showMessage(message) {
+            const status = document.getElementById('statusIndicator');
+            status.textContent = message;
+            status.style.background = '#27ae60';
+            status.style.opacity = '1';
+            setTimeout(() => {
+                status.style.opacity = '0.7';
+            }, 3000);
+        }
+
+        // キーボードショートカット
+        document.addEventListener('keydown', function(e) {
+            // ESCキーで編集ダイアログを閉じる
+            if (e.key === 'Escape') {
+                closeElectrodeEditor();
+                closeExportArea();
+            }
+            // Enterキーで保存
+            if (e.key === 'Enter' && currentEditingElectrode) {
+                saveElectrodeName();
+            }
+        });
+
+        // 初期化
+        window.onload = function() {
+            initializeApplication();
+        };
+    </script>
+</body>
+</html>
