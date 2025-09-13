@@ -1,73 +1,78 @@
 # EEG Electrode Mapper
 
-A browser-based tool for creating custom EEG electrode layouts using the international 10-10 system. Generate high-quality SVG diagrams for research, clinical documentation, and publication.
+A standalone HTML tool for creating custom EEG electrode layouts using the international 10-10 system. **No server required** - just open in your browser and start selecting electrodes for your research.
 
 ## Features
 
-- **76 standard 10-10 electrodes** with accurate positioning
-- **Interactive electrode selection** with visual head map
-- **12 preset configurations** for common electrode arrangements
-- **High-quality SVG export** with customizable layouts
-- **Region-based color coding** for easy identification
-- **No installation required** - runs directly in web browser
+- **🚀 Zero setup** - Double-click HTML file and start immediately
+- **Interactive head map** - Visual 3D-style electrode placement
+- **Click-to-select electrodes** - Individual electrode selection with hover effects
+- **6 anatomical presets** - Frontal, Central, Parietal, Occipital, Temporal, All
+- **Dual export formats** - High-quality SVG and PNG downloads
+- **Live electrode editing** - Rename electrodes with edit mode
+- **Search functionality** - Find electrodes by name
+- **Real-time counter** - See selected electrode count instantly
 
 ## Quick Start
 
-### Using VSCode Live Server (Recommended)
+### Method 1: Direct Browser Launch (Easiest)
 
-1. Install the Live Server extension in VSCode
-2. Open `eeg_electrode_selector_en.html` in VSCode
-3. Right-click and select "Open with Live Server"
+**Just double-click the HTML file** - works instantly:
 
-### Alternative Web Servers
+- `eeg_electrode_selector_main_en.html` - **Main English version** (recommended)
+- `eeg_electrode_selector_main_jp.html` - Japanese version
+- `eeg_electrode_selector_archive.html` - Archive version
 
-```bash
-# Python
-python -m http.server 8000
+### Method 2: Using VSCode Live Server (Optional)
 
-# Node.js
-npx http-server -p 8000
+For development workflow:
 
-# PHP
-php -S localhost:8000
-```
+1. Install Live Server extension in VSCode
+2. Right-click HTML file → "Open with Live Server"
 
 ## Available Files
 
-| File | Description |
-|------|-------------|
-| `eeg_electrode_selector_en.html` | English version with full features |
-| `eeg_electrode_selector_numbered_standalone.html` | Version with numbered electrodes |
-| `eeg_electrode_selector_pdf.html` | PDF-optimized version |
-| `electrode_correction_list_new.json` | Electrode coordinate data |
+| File | Description | Language |
+|------|-------------|----------|
+| `eeg_electrode_selector_main_en.html` | **Main version** with all features | English |
+| `eeg_electrode_selector_main_jp.html` | Full-featured version | Japanese |
+| `eeg_electrode_selector_archive.html` | Archive/backup version | Mixed |
+| `electrode_correction_list_new.json` | Electrode coordinate data | - |
 
-## Usage
+## How to Use
 
-### Electrode Selection
-- **Individual Selection**: Click electrodes on the head map
-- **Preset Selection**: Use buttons for common electrode configurations
-- **Search**: Filter electrodes by name or region
+### Step-by-Step Guide
+
+1. **Open the tool** - Double-click `eeg_electrode_selector_main_en.html`
+2. **Select electrodes** - Click individual electrodes on the head map
+3. **Use presets** - Or click preset buttons for common configurations
+4. **Export layout** - Click "Export SVG" or "Export PNG" to save
+
+### Interactive Features
+
+- **Hover effects** - Electrodes scale up and highlight when hovered
+- **Real-time feedback** - Selected electrode count updates instantly
+- **Search box** - Type to find specific electrodes quickly
+- **Edit mode** - Toggle to rename electrodes (click Edit Mode button)
+- **Clear all** - Reset selection with one click
 
 ### Available Presets
 
-| Preset | Count | Description |
-|--------|-------|-------------|
-| Standard 21 | 20 | Basic clinical EEG set |
-| Motor Cortex | 5 | C3, C1, Cz, C2, C4 |
-| Frontal | ~30 | Fp, AF, F electrodes |
-| Central | ~20 | FC, C electrodes |
-| Parietal | ~15 | CP, P electrodes |
-| Occipital | ~20 | PO, O, I electrodes |
-| Temporal | ~10 | FT, T, TP electrodes |
-| Left Hemisphere | ~35 | Odd-numbered electrodes |
-| Right Hemisphere | ~35 | Even-numbered electrodes |
-| Midline | ~10 | z-line electrodes |
-| All Electrodes | 76 | Complete 10-10 system |
+| Preset | Example Electrodes | Use Case |
+|--------|-------------------|----------|
+| **Frontal** | Fp1, Fp2, AF3, AF4, F1-F8, Fz | Attention, executive function |
+| **Central** | FC1-FC6, C1-C6, Cz | Motor control, sensorimotor |
+| **Parietal** | CP1-CP6, P1-P8, Pz | Spatial processing, attention |
+| **Occipital** | PO3, PO4, O1, O2, Oz | Visual processing |
+| **Temporal** | T7, T8, TP7-TP10, FC7-FC10 | Auditory, language |
+| **All** | Complete 10-10 system | Full coverage studies |
 
-### Export Options
-- **High-quality SVG**: Scalable vector graphics for publications
-- **Complete layout**: Includes nose/ear markers and legend
-- **Automatic naming**: `EEG_10-10_layout_XXch_timestamp.svg`
+### Export Features
+
+- **SVG format** - Scalable vector graphics, perfect for publications
+- **PNG format** - High-resolution bitmap for presentations
+- **Auto-naming** - Files named with electrode count and date
+- **Complete layout** - Includes head outline, nose, and ear markers
 
 ## Technical Specifications
 
@@ -91,37 +96,35 @@ php -S localhost:8000
 ```
 
 ### Browser Compatibility
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ⚠️ Internet Explorer 11 (limited support)
+- ✅ **Chrome/Edge** (recommended) - Full support with all animations
+- ✅ **Firefox** - Full support
+- ✅ **Safari** - Full support
+- ✅ **Mobile browsers** - Touch-friendly interface
+- ⚠️ **Internet Explorer** - Not recommended, use Edge instead
 
-## Region Color Coding
-
-| Region | Color | Example Electrodes |
-|--------|-------|-------------------|
-| Frontal | Orange | Fp1, AF3, F7, F3, Fz |
-| Central | Green | FC1, C3, Cz, C4 |
-| Parietal | Purple | CP3, P7, P3, Pz |
-| Occipital | Brown | PO3, O1, Oz, I1 |
-| Temporal | Blue | FT7, T7, TP7 |
+### Visual Design
+- **3D-style head outline** with nose and ear markers for orientation
+- **Interactive electrodes** with hover scaling and visual feedback
+- **Clean modern interface** with gradient backgrounds
+- **Responsive design** that works on different screen sizes
+- **Color-coded selection** - Selected electrodes turn red
 
 ## Troubleshooting
 
-### Server Issues
-1. Ensure HTML file is open in VSCode
-2. Verify Live Server extension is installed
-3. Check if port is available (try different port)
+### File Won't Open in Browser
+1. Make sure you're opening an HTML file (not JSON)
+2. Try right-click → "Open with" → select your browser
+3. If using Chrome, may need to use `file://` protocol
 
 ### Display Problems
-1. Open browser console (F12) to check for errors
-2. Verify JavaScript is enabled
-3. Try a different browser
+1. Ensure JavaScript is enabled in your browser
+2. Try a different browser (Chrome/Firefox/Safari recommended)
+3. Check browser console (F12) for error messages
 
 ### Export Issues
-1. Disable popup blockers
-2. Check download settings
-3. Try alternative browser
+1. Disable popup blockers for SVG downloads
+2. Check browser download settings
+3. Try right-click → "Save as" if download button doesn't work
 
 ## Quality Assurance
 
@@ -136,6 +139,27 @@ php -S localhost:8000
 - P3: distance 0.085 ✅
 - AFz: distance 0.078 ✅
 
+## Perfect for Research
+
+### Academic Applications
+- **EEG study design** - Plan electrode montages before data collection
+- **Paper illustrations** - Generate publication-quality electrode diagrams
+- **Grant proposals** - Visual representation of planned electrode coverage
+- **Teaching** - Demonstrate 10-10 system to students
+- **Clinical documentation** - Document electrode placement for patients
+
+### Key Advantages
+- **Zero installation** - No software to install or update
+- **Instant startup** - Double-click and start working immediately
+- **Publication ready** - SVG format scales perfectly for any publication
+- **Offline capable** - Works without internet connection
+- **Cross-platform** - Same experience on Windows, Mac, Linux
+- **Version independent** - No compatibility issues or updates required
+
 ## License
 
 This project is open source and available for academic and research use.
+
+---
+
+**💡 Pro tip:** Bookmark `eeg_electrode_selector_main_en.html` in your browser for instant access!
