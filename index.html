@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,39 @@
             padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .language-btn {
+            background: white;
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .language-btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .language-btn.active {
+            background: #3498db;
+            color: white;
         }
 
         .container {
@@ -48,904 +81,511 @@
         }
 
         .control-panel {
-            width: 350px;
+            flex: 0 0 280px;
             background: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
             height: fit-content;
-            max-height: 800px;
-            overflow-y: auto;
         }
 
-        .electrode-display {
-            flex: 1;
-            text-align: center;
+        .control-section {
+            margin-bottom: 25px;
         }
 
-        .head-container {
-            position: relative;
-            width: 700px;
-            height: 700px;
-            margin: 40px auto 0 auto;
-        }
-
-        .head-background {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: white;
-            z-index: 2;
-        }
-
-        .head-border {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 3px solid black;
-            border-radius: 50%;
-            background: transparent;
-            z-index: 3;
-        }
-
-        .electrode {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid black;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            color: black;
-            z-index: 10;
-        }
-
-        .electrode:hover {
-            transform: translate(-50%, -50%) scale(1.3);
-            z-index: 15;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-            font-size: 14px;
-        }
-
-        .electrode.active {
-            background: #e74c3c;
-            color: white;
-            border-color: #c0392b;
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
-        }
-
-        .nose-marker {
-            position: absolute;
-            top: -45px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 45px solid transparent;
-            border-right: 45px solid transparent;
-            border-bottom: 90px solid black;
-            z-index: 1;
-        }
-
-        .nose-marker::after {
-            content: '';
-            position: absolute;
-            top: 6px;
-            left: -39px;
-            width: 0;
-            height: 0;
-            border-left: 39px solid transparent;
-            border-right: 39px solid transparent;
-            border-bottom: 78px solid white;
-        }
-
-        .ear-marker {
-            position: absolute;
-            top: 50%;
-            width: 35px;
-            height: 70px;
-            background: white;
-            border: 3px solid black;
-            border-radius: 0 20px 20px 0;
-            transform: translateY(-50%);
-        }
-
-        .ear-left {
-            left: -40px;
-            border-radius: 20px 0 0 20px;
-            border-right: none;
-        }
-
-        .ear-right {
-            right: -40px;
-            border-left: none;
-        }
-
-        .control-group {
-            margin-bottom: 15px;
-        }
-
-        .control-group h3 {
-            margin: 0 0 10px 0;
+        .control-section h3 {
+            margin: 0 0 15px 0;
             color: #2c3e50;
             font-size: 1.1em;
-        }
-
-        .button {
-            width: 100%;
-            padding: 10px;
-            margin: 3px 0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 11px;
-            transition: all 0.3s ease;
-        }
-
-        .button.primary {
-            background: #3498db;
-            color: white;
-        }
-
-        .button.primary:hover {
-            background: #2980b9;
-        }
-
-        .button.warning {
-            background: #f39c12;
-            color: white;
-        }
-
-        .button.warning:hover {
-            background: #e67e22;
-        }
-
-        .button.success {
-            background: #27ae60;
-            color: white;
-        }
-
-        .button.success:hover {
-            background: #229954;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
         }
 
         .preset-buttons {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
-        .selected-count {
-            background: #34495e;
+        .preset-btn, .control-btn {
+            background: #3498db;
             color: white;
-            padding: 10px;
+            border: none;
+            padding: 10px 15px;
             border-radius: 6px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .electrode-list {
-            max-height: 300px;
-            overflow-y: auto;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 10px;
-        }
-
-        .electrode-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2px 0;
-            border-bottom: 1px solid #eee;
             cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
-        .electrode-item:hover {
-            background-color: #f8f9fa;
+        .preset-btn:hover, .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .electrode-item.highlighted {
-            background-color: #e8f5e8;
-            font-weight: bold;
-        }
-
-        .electrode-item:last-child {
-            border-bottom: none;
-        }
-
-        .electrode-name {
-            font-weight: bold;
-            color: #2c3e50;
+        .control-btn {
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         .search-box {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-size: 12px;
-        }
-
-        .status-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #e74c3c;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-        }
-
-        .stats {
-            background: #ecf0f1;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            margin-top: 10px;
-        }
-
-        .edit-mode .electrode {
-            cursor: text;
-        }
-
-        .electrode-editor {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 2px solid #3498db;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 1000;
-            min-width: 300px;
-        }
-
-        .electrode-editor h3 {
-            margin-top: 0;
-            color: #2c3e50;
-            text-align: center;
-        }
-
-        .electrode-editor input {
-            width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            margin: 10px 0;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
         }
 
-        .electrode-editor-buttons {
+        .search-box:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .visualization-area {
+            flex: 1;
+            position: relative;
+            background: white;
+            border-radius: 10px;
             display: flex;
-            gap: 10px;
             justify-content: center;
+            align-items: center;
+            min-height: 600px;
         }
 
-        .electrode-editor-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
+        .head-outline {
+            position: relative;
+            width: 500px;
+            height: 600px;
+        }
+
+        .electrode {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ecf0f1;
+            border: 2px solid #34495e;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
             font-weight: bold;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            z-index: 10;
         }
 
-        .save-btn {
-            background: #27ae60;
-            color: white;
+        .electrode:hover {
+            transform: scale(1.3);
+            background: #f39c12;
+            border-color: #d68910;
+            z-index: 20;
         }
 
-        .cancel-btn {
+        .electrode.selected {
             background: #e74c3c;
+            border-color: #c0392b;
             color: white;
         }
 
-        .overlay {
-            position: fixed;
+        .electrode.selected:hover {
+            background: #c0392b;
+        }
+
+        .electrode.edit-mode {
+            background: #9b59b6;
+            border-color: #8e44ad;
+            color: white;
+        }
+
+        .head-svg {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
+            z-index: 1;
         }
 
-        /* PDF container styles (hidden from display) */
-        .pdf-container {
-            display: none;
-            width: 700px;
-            height: 700px;
-            position: relative;
-            background: white;
+        .export-section {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
         }
 
-        .pdf-electrode {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid black;
-            border-radius: 50%;
-            background: white;
+        .export-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
+            gap: 10px;
+        }
+
+        .export-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: bold;
-            transform: translate(-50%, -50%);
-            color: black;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .export-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .edit-mode-active .electrode:not(.selected) {
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .control-panel {
+                flex: none;
+            }
+
+            .head-outline {
+                width: 400px;
+                height: 480px;
+            }
+
+            .language-switcher {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="status-indicator" id="statusIndicator">
-        Select electrodes
+    <div class="language-switcher">
+        <button class="language-btn active" onclick="switchLanguage('en')" id="lang-en">English</button>
+        <button class="language-btn" onclick="switchLanguage('ja')" id="lang-ja">日本語</button>
     </div>
 
     <div class="container">
         <div class="header">
-            <h1>EEG Electrode Layout Export Tool</h1>
-            <div class="electrode-count">Export electrode layout diagrams in SVG/PNG format</div>
+            <h1 id="main-title">EEG Electrode Layout Export Tool</h1>
+            <div class="electrode-count" id="electrode-count">Selected electrodes: 0</div>
         </div>
 
         <div class="content">
             <div class="control-panel">
-                <div class="selected-count">
-                    Selected: <span id="selectedCount">0</span> electrodes
-                </div>
-
-                <div class="control-group">
-                    <h3>Electrode Search</h3>
-                    <input type="text" id="searchBox" class="search-box" placeholder="Search by electrode name (e.g. Cz, F3)">
-                </div>
-
-                <div class="control-group">
-                    <h3>Selection Presets</h3>
+                <div class="control-section">
+                    <h3 id="presets-title">Anatomical Presets</h3>
                     <div class="preset-buttons">
-                        <button class="button primary" onclick="selectPreset('frontal')">Frontal</button>
-                        <button class="button primary" onclick="selectPreset('central')">Central</button>
-                        <button class="button primary" onclick="selectPreset('parietal')">Parietal</button>
-                        <button class="button primary" onclick="selectPreset('occipital')">Occipital</button>
-                        <button class="button primary" onclick="selectPreset('temporal')">Temporal</button>
-                        <button class="button primary" onclick="selectPreset('all')">Select All</button>
-                    </div>
-                    <button class="button warning" onclick="clearSelection()">Clear All</button>
-                </div>
-
-                <div class="control-group">
-                    <h3>Electrode Editing</h3>
-                    <button class="button primary" onclick="toggleEditMode()" id="editModeButton">Edit Mode: OFF</button>
-                    <div style="font-size: 10px; margin-top: 5px; color: #666;">
-                        When edit mode is ON, click electrodes to change their names
+                        <button class="preset-btn" onclick="selectPreset('frontal')" id="frontal-btn">Frontal</button>
+                        <button class="preset-btn" onclick="selectPreset('central')" id="central-btn">Central</button>
+                        <button class="preset-btn" onclick="selectPreset('parietal')" id="parietal-btn">Parietal</button>
+                        <button class="preset-btn" onclick="selectPreset('occipital')" id="occipital-btn">Occipital</button>
+                        <button class="preset-btn" onclick="selectPreset('temporal')" id="temporal-btn">Temporal</button>
+                        <button class="preset-btn" onclick="selectPreset('all')" id="all-btn">All</button>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <h3>File Export</h3>
-                    <button class="button success" onclick="saveSVG()" id="svgButton">Export SVG</button>
-                    <button class="button success" onclick="savePNG()" id="pngButton">Export PNG</button>
-                    <div style="font-size: 10px; margin-top: 5px; color: #666;">
-                        Export files containing only selected electrodes (all client-side processing)
-                    </div>
+                <div class="control-section">
+                    <h3 id="controls-title">Controls</h3>
+                    <button class="control-btn" onclick="clearSelection()" id="clear-btn">Clear All</button>
+                    <button class="control-btn" onclick="toggleEditMode()" id="edit-btn">Edit Mode</button>
                 </div>
 
-                <div class="control-group">
-                    <h3>Selected Electrodes List</h3>
-                    <div id="selectedElectrodeList" class="electrode-list">
-                        Selected electrodes will be displayed here
-                    </div>
+                <div class="control-section">
+                    <h3 id="search-title">Search</h3>
+                    <input type="text" class="search-box" id="electrode-search" placeholder="Search electrodes...">
                 </div>
 
-                <div class="stats">
-                    <strong>How to Use</strong><br>
-                    1. Click electrodes to select (highlighted in red)<br>
-                    2. Use preset buttons for region-specific selection<br>
-                    3. Turn on "Edit Mode" to modify electrode names<br>
-                    4. "Export SVG" or "Export PNG" to save layout diagram<br>
-                    5. Exported files contain only selected electrodes
+                <div class="control-section export-section">
+                    <h3 id="export-title">Export Layout</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="exportSVG()" id="export-svg-btn">Export SVG</button>
+                        <button class="export-btn" onclick="exportPNG()" id="export-png-btn">Export PNG</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="electrode-display">
-                <div class="head-container" id="headContainer">
-                    <div class="nose-marker"></div>
-                    <div class="head-background"></div>
-                    <div class="head-border"></div>
-                    <div class="ear-marker ear-left"></div>
-                    <div class="ear-marker ear-right"></div>
+            <div class="visualization-area">
+                <div class="head-outline" id="head-container">
+                    <svg class="head-svg" viewBox="0 0 500 600">
+                        <ellipse cx="250" cy="350" rx="200" ry="240" fill="none" stroke="#34495e" stroke-width="3"/>
+                        <path d="M 250 110 L 240 90 L 260 90 Z" fill="none" stroke="#34495e" stroke-width="2"/>
+                        <circle cx="80" cy="320" r="15" fill="none" stroke="#34495e" stroke-width="2"/>
+                        <circle cx="420" cy="320" r="15" fill="none" stroke="#34495e" stroke-width="2"/>
+                    </svg>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Hidden container for PDF generation -->
-    <div class="pdf-container" id="pdfContainer">
-        <div class="head-background" style="width: 100%; height: 100%; border-radius: 50%; background: white; position: absolute;"></div>
-        <div class="head-border" style="width: 100%; height: 100%; border: 3px solid black; border-radius: 50%; background: transparent; position: absolute;"></div>
-        <div class="nose-marker" style="position: absolute; top: -45px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 45px solid transparent; border-right: 45px solid transparent; border-bottom: 90px solid black;"></div>
-        <div class="ear-marker ear-left" style="position: absolute; top: 50%; left: -40px; width: 35px; height: 70px; background: white; border: 3px solid black; border-radius: 20px 0 0 20px; border-right: none; transform: translateY(-50%);"></div>
-        <div class="ear-marker ear-right" style="position: absolute; top: 50%; right: -40px; width: 35px; height: 70px; background: white; border: 3px solid black; border-radius: 0 20px 20px 0; border-left: none; transform: translateY(-50%);"></div>
-    </div>
-
     <script>
-        // Electrode data (numbers removed)
-        const electrodeData = [
-            {"name": "Nz", "x": -0.002352941176470588, "y": 0.7588652482269503},
-            {"name": "Fpz", "x": -0.002352941176470588, "y": 0.5981087470449172},
-            {"name": "Fp2", "x": 0.19058823529411764, "y": 0.5697399527186762},
-            {"name": "Fp1", "x": -0.18588235294117647, "y": 0.5650118203309693},
-            {"name": "AF7", "x": -0.3788235294117647, "y": 0.4562647754137116},
-            {"name": "AF8", "x": 0.3788235294117647, "y": 0.4562647754137116},
-            {"name": "AFz", "x": -0.002352941176470588, "y": 0.4231678486997636},
-            {"name": "AF4", "x": 0.22823529411764706, "y": 0.4231678486997636},
-            {"name": "AF3", "x": -0.2235294117647059, "y": 0.41843971631205673},
-            {"name": "F9", "x": -0.68, "y": 0.375886524822695},
-            {"name": "F10", "x": 0.6847058823529412, "y": 0.375886524822695},
-            {"name": "F8", "x": 0.5152941176470588, "y": 0.3191489361702128},
-            {"name": "F7", "x": -0.5105882352941177, "y": 0.3144208037825059},
-            {"name": "F6", "x": 0.3976470588235294, "y": 0.2860520094562648},
-            {"name": "F5", "x": -0.39294117647058824, "y": 0.28132387706855794},
-            {"name": "F3", "x": -0.26588235294117646, "y": 0.26713947990543735},
-            {"name": "F4", "x": 0.26588235294117646, "y": 0.26713947990543735},
-            {"name": "F1", "x": -0.12941176470588237, "y": 0.2576832151300236},
-            {"name": "F2", "x": 0.12941176470588237, "y": 0.2576832151300236},
-            {"name": "Fz", "x": 0.002352941176470588, "y": 0.25295508274231676},
-            {"name": "FC10", "x": 0.7694117647058824, "y": 0.13947990543735225},
-            {"name": "FC9", "x": -0.7694117647058824, "y": 0.1347517730496454},
-            {"name": "FC8", "x": 0.6047058823529412, "y": 0.12529550827423167},
-            {"name": "FC7", "x": -0.6047058823529412, "y": 0.12056737588652482},
-            {"name": "FC5", "x": -0.4541176470588235, "y": 0.10638297872340426},
-            {"name": "FC6", "x": 0.4541176470588235, "y": 0.10638297872340426},
-            {"name": "FC3", "x": -0.2988235294117647, "y": 0.09219858156028368},
-            {"name": "FC4", "x": 0.2988235294117647, "y": 0.09219858156028368},
-            {"name": "FC1", "x": -0.15294117647058825, "y": 0.08747044917257683},
-            {"name": "FC2", "x": 0.15294117647058825, "y": 0.08747044917257683},
-            {"name": "FCz", "x": -0.002352941176470588, "y": 0.07801418439716312},
-            {"name": "M1", "x": -0.9294117647058824, "y": -0.07801418439716312},
-            {"name": "T9", "x": -0.8070588235294117, "y": -0.07801418439716312},
-            {"name": "T7", "x": -0.6470588235294118, "y": -0.07801418439716312},
-            {"name": "C5", "x": -0.4823529411764706, "y": -0.07801418439716312},
-            {"name": "C3", "x": -0.32235294117647056, "y": -0.07801418439716312},
-            {"name": "C1", "x": -0.15764705882352942, "y": -0.07801418439716312},
-            {"name": "Cz", "x": -0.002352941176470588, "y": -0.07801418439716312},
-            {"name": "C2", "x": 0.1623529411764706, "y": -0.07801418439716312},
-            {"name": "C4", "x": 0.32235294117647056, "y": -0.07801418439716312},
-            {"name": "C6", "x": 0.4823529411764706, "y": -0.07801418439716312},
-            {"name": "T8", "x": 0.6423529411764706, "y": -0.07801418439716312},
-            {"name": "T10", "x": 0.8070588235294117, "y": -0.07801418439716312},
-            {"name": "M2", "x": 0.9294117647058824, "y": -0.07801418439716312},
-            {"name": "CPz", "x": -0.002352941176470588, "y": -0.23877068557919623},
-            {"name": "CP1", "x": -0.14823529411764705, "y": -0.25295508274231676},
-            {"name": "CP2", "x": 0.15294117647058825, "y": -0.25295508274231676},
-            {"name": "CP3", "x": -0.2988235294117647, "y": -0.2576832151300236},
-            {"name": "CP4", "x": 0.2988235294117647, "y": -0.2576832151300236},
-            {"name": "CP5", "x": -0.44941176470588234, "y": -0.2718676122931442},
-            {"name": "CP6", "x": 0.4541176470588235, "y": -0.2718676122931442},
-            {"name": "TP7", "x": -0.6, "y": -0.2907801418439716},
-            {"name": "TP8", "x": 0.6047058823529412, "y": -0.2907801418439716},
-            {"name": "TP9", "x": -0.7647058823529411, "y": -0.30023640661938533},
-            {"name": "TP10", "x": 0.7694117647058824, "y": -0.30023640661938533},
-            {"name": "Pz", "x": -0.002352941176470588, "y": -0.41843971631205673},
-            {"name": "P1", "x": -0.12470588235294118, "y": -0.4231678486997636},
-            {"name": "P2", "x": 0.12941176470588237, "y": -0.4231678486997636},
-            {"name": "P3", "x": -0.2611764705882353, "y": -0.4326241134751773},
-            {"name": "P4", "x": 0.2611764705882353, "y": -0.4326241134751773},
-            {"name": "P5", "x": -0.39294117647058824, "y": -0.4515366430260047},
-            {"name": "P6", "x": 0.3976470588235294, "y": -0.4515366430260047},
-            {"name": "P7", "x": -0.5105882352941177, "y": -0.4846335697399527},
-            {"name": "P8", "x": 0.5058823529411764, "y": -0.4846335697399527},
-            {"name": "P9", "x": -0.68, "y": -0.541371158392435},
-            {"name": "P10", "x": 0.6847058823529412, "y": -0.541371158392435},
-            {"name": "PO3", "x": -0.2235294117647059, "y": -0.5886524822695035},
-            {"name": "POz", "x": -0.002352941176470588, "y": -0.5886524822695035},
-            {"name": "PO4", "x": 0.2235294117647059, "y": -0.5886524822695035},
-            {"name": "PO7", "x": -0.37411764705882355, "y": -0.6217494089834515},
-            {"name": "PO8", "x": 0.3788235294117647, "y": -0.6217494089834515},
-            {"name": "O1", "x": -0.18588235294117647, "y": -0.735224586288416},
-            {"name": "O2", "x": 0.18588235294117647, "y": -0.735224586288416},
-            {"name": "Oz", "x": -0.002352941176470588, "y": -0.7588652482269503},
-            {"name": "Iz", "x": -0.002352941176470588, "y": -0.9290780141843972}
-        ];
-
-        let selectedElectrodes = new Set();
-        let editMode = false;
-        let currentEditingElectrode = null;
-
-        // Electrode layout presets
-        const presets = {
-            frontal: ['Fp1', 'Fp2', 'Fpz', 'AF3', 'AF4', 'AF7', 'AF8', 'AFz', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'Fz'],
-            central: ['FC1', 'FC2', 'FC3', 'FC4', 'FC5', 'FC6', 'FCz', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'Cz'],
-            parietal: ['CP1', 'CP2', 'CP3', 'CP4', 'CP5', 'CP6', 'CPz', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'Pz'],
-            occipital: ['PO3', 'PO4', 'PO7', 'PO8', 'POz', 'O1', 'O2', 'Oz'],
-            temporal: ['T7', 'T8', 'T9', 'T10', 'TP7', 'TP8', 'TP9', 'TP10', 'FC7', 'FC8', 'FC9', 'FC10'],
-            all: electrodeData.map(e => e.name)
+        // Language data
+        const translations = {
+            en: {
+                title: "EEG Electrode Layout Export Tool",
+                electrodeCount: "Selected electrodes",
+                presetsTitle: "Anatomical Presets",
+                controlsTitle: "Controls",
+                searchTitle: "Search",
+                exportTitle: "Export Layout",
+                clearBtn: "Clear All",
+                editBtn: "Edit Mode",
+                exportSvgBtn: "Export SVG",
+                exportPngBtn: "Export PNG",
+                searchPlaceholder: "Search electrodes...",
+                frontalBtn: "Frontal",
+                centralBtn: "Central",
+                parietalBtn: "Parietal",
+                occipitalBtn: "Occipital",
+                temporalBtn: "Temporal",
+                allBtn: "All"
+            },
+            ja: {
+                title: "EEG 電極配置図 保存ツール",
+                electrodeCount: "選択された電極",
+                presetsTitle: "解剖学的プリセット",
+                controlsTitle: "コントロール",
+                searchTitle: "検索",
+                exportTitle: "配置図の出力",
+                clearBtn: "全てクリア",
+                editBtn: "編集モード",
+                exportSvgBtn: "SVG出力",
+                exportPngBtn: "PNG出力",
+                searchPlaceholder: "電極を検索...",
+                frontalBtn: "前頭",
+                centralBtn: "中心",
+                parietalBtn: "頭頂",
+                occipitalBtn: "後頭",
+                temporalBtn: "側頭",
+                allBtn: "全て"
+            }
         };
 
-        function initializeApplication() {
-            console.log('Electrode data loaded successfully:', electrodeData.length, 'electrodes');
-            initializeElectrodes();
-            updateSelectedElectrodesList();
+        let currentLanguage = 'en';
+        let selectedElectrodes = new Set();
+        let electrodeData = [];
+        let editMode = false;
 
-            const status = document.getElementById('statusIndicator');
-            status.textContent = 'Select electrodes';
-            status.style.background = '#3498db';
+        // Language switching function
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('html-root').lang = lang;
+
+            // Update button states
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-ja').classList.toggle('active', lang === 'ja');
+
+            // Update text content
+            const t = translations[lang];
+            document.getElementById('main-title').textContent = t.title;
+            document.getElementById('presets-title').textContent = t.presetsTitle;
+            document.getElementById('controls-title').textContent = t.controlsTitle;
+            document.getElementById('search-title').textContent = t.searchTitle;
+            document.getElementById('export-title').textContent = t.exportTitle;
+            document.getElementById('clear-btn').textContent = t.clearBtn;
+            document.getElementById('edit-btn').textContent = t.editBtn;
+            document.getElementById('export-svg-btn').textContent = t.exportSvgBtn;
+            document.getElementById('export-png-btn').textContent = t.exportPngBtn;
+            document.getElementById('electrode-search').placeholder = t.searchPlaceholder;
+            document.getElementById('frontal-btn').textContent = t.frontalBtn;
+            document.getElementById('central-btn').textContent = t.centralBtn;
+            document.getElementById('parietal-btn').textContent = t.parietalBtn;
+            document.getElementById('occipital-btn').textContent = t.occipitalBtn;
+            document.getElementById('temporal-btn').textContent = t.temporalBtn;
+            document.getElementById('all-btn').textContent = t.allBtn;
+
+            updateElectrodeCount();
         }
 
-        function initializeElectrodes() {
-            const container = document.getElementById('headContainer');
-            container.querySelectorAll('.electrode').forEach(el => el.remove());
-
-            electrodeData.forEach(electrode => {
-                const div = document.createElement('div');
-                div.className = 'electrode';
-                div.id = `electrode-${electrode.name}`;
-
-                const scale = 400;
-                const x = electrode.x * scale + 350;
-                const y = -electrode.y * scale + 350 - 30;
-
-                div.style.left = x + 'px';
-                div.style.top = y + 'px';
-                div.textContent = electrode.name;
-                div.title = electrode.name;
-
-                div.onclick = () => {
-                    if (editMode) {
-                        openElectrodeEditor(electrode);
-                    } else {
-                        toggleElectrode(electrode.name);
-                    }
-                };
-                container.appendChild(div);
+        // Load electrode data and initialize
+        fetch('electrode_correction_list_new.json')
+            .then(response => response.json())
+            .then(data => {
+                electrodeData = data;
+                createElectrodes();
+                setupSearch();
+            })
+            .catch(error => {
+                console.error('Error loading electrode data:', error);
             });
 
-            // Search functionality
-            const searchBox = document.getElementById('searchBox');
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                electrodeData.forEach(electrode => {
-                    const element = document.getElementById(`electrode-${electrode.name}`);
-                    const matchesName = electrode.name.toLowerCase().includes(searchTerm);
+        function createElectrodes() {
+            const container = document.getElementById('head-container');
 
-                    if (matchesName || !searchTerm) {
-                        element.style.opacity = '1';
-                        element.style.transform = 'translate(-50%, -50%) scale(1.2)';
-                        element.style.zIndex = '12';
-                    } else {
-                        element.style.opacity = '0.3';
-                        element.style.transform = 'translate(-50%, -50%) scale(1)';
-                        element.style.zIndex = '10';
-                    }
-                });
+            electrodeData.forEach(electrode => {
+                const electrodeElement = document.createElement('div');
+                electrodeElement.className = 'electrode';
+                electrodeElement.textContent = electrode.name;
+                electrodeElement.title = electrode.name;
+
+                const x = (electrode.x + 1) * 250;
+                const y = (electrode.y + 1) * 300;
+
+                electrodeElement.style.left = (x - 10) + 'px';
+                electrodeElement.style.top = (y - 10) + 'px';
+
+                electrodeElement.addEventListener('click', () => toggleElectrode(electrode.name));
+
+                container.appendChild(electrodeElement);
             });
         }
 
         function toggleElectrode(name) {
+            if (editMode) {
+                const newName = prompt(`Enter new name for ${name}:`, name);
+                if (newName && newName !== name) {
+                    const electrodeElement = [...document.querySelectorAll('.electrode')].find(el => el.textContent === name);
+                    if (electrodeElement) {
+                        electrodeElement.textContent = newName;
+                        electrodeElement.title = newName;
+                    }
+                }
+                return;
+            }
+
             if (selectedElectrodes.has(name)) {
                 selectedElectrodes.delete(name);
-                document.getElementById(`electrode-${name}`).classList.remove('active');
             } else {
                 selectedElectrodes.add(name);
-                document.getElementById(`electrode-${name}`).classList.add('active');
             }
-            updateSelectedCount();
-            updateSelectedElectrodesList();
+
+            updateElectrodeDisplay();
+            updateElectrodeCount();
         }
 
-        function selectPreset(presetName) {
-            if (presets[presetName]) {
-                presets[presetName].forEach(name => {
-                    if (electrodeData.some(e => e.name === name)) {
-                        selectedElectrodes.add(name);
-                        const element = document.getElementById(`electrode-${name}`);
-                        if (element) element.classList.add('active');
-                    }
-                });
-                updateSelectedCount();
-                updateSelectedElectrodesList();
-            }
+        function updateElectrodeDisplay() {
+            document.querySelectorAll('.electrode').forEach(el => {
+                el.classList.toggle('selected', selectedElectrodes.has(el.textContent));
+            });
+        }
+
+        function updateElectrodeCount() {
+            const t = translations[currentLanguage];
+            document.getElementById('electrode-count').textContent = `${t.electrodeCount}: ${selectedElectrodes.size}`;
+        }
+
+        function selectPreset(presetType) {
+            const presets = {
+                frontal: ['Fp1', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8', 'F7', 'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8'],
+                central: ['FC5', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'C5', 'C3', 'C1', 'Cz', 'C2', 'C4', 'C6'],
+                parietal: ['CP5', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'P7', 'P5', 'P3', 'P1', 'Pz', 'P2', 'P4', 'P6', 'P8'],
+                occipital: ['PO7', 'PO3', 'POz', 'PO4', 'PO8', 'O1', 'Oz', 'O2'],
+                temporal: ['FT7', 'FT8', 'T7', 'T8', 'TP7', 'TP8'],
+                all: electrodeData.map(e => e.name)
+            };
+
+            selectedElectrodes.clear();
+            presets[presetType].forEach(name => {
+                if (electrodeData.some(e => e.name === name)) {
+                    selectedElectrodes.add(name);
+                }
+            });
+
+            updateElectrodeDisplay();
+            updateElectrodeCount();
         }
 
         function clearSelection() {
             selectedElectrodes.clear();
+            updateElectrodeDisplay();
+            updateElectrodeCount();
+        }
+
+        function toggleEditMode() {
+            editMode = !editMode;
+            document.body.classList.toggle('edit-mode-active', editMode);
             document.querySelectorAll('.electrode').forEach(el => {
-                el.classList.remove('active');
-            });
-            updateSelectedCount();
-            updateSelectedElectrodesList();
-        }
-
-        function updateSelectedCount() {
-            document.getElementById('selectedCount').textContent = selectedElectrodes.size;
-
-            const svgButton = document.getElementById('svgButton');
-            const pngButton = document.getElementById('pngButton');
-            if (selectedElectrodes.size > 0) {
-                svgButton.textContent = `Export SVG (${selectedElectrodes.size} electrodes)`;
-                pngButton.textContent = `Export PNG (${selectedElectrodes.size} electrodes)`;
-            } else {
-                svgButton.textContent = 'Export SVG';
-                pngButton.textContent = 'Export PNG';
-            }
-        }
-
-        function updateSelectedElectrodesList() {
-            const listContainer = document.getElementById('selectedElectrodeList');
-            listContainer.innerHTML = '';
-
-            if (selectedElectrodes.size === 0) {
-                listContainer.innerHTML = '<div style="color: #999;">No electrodes selected</div>';
-                return;
-            }
-
-            const sortedElectrodes = Array.from(selectedElectrodes).sort();
-            sortedElectrodes.forEach(name => {
-                const item = document.createElement('div');
-                item.className = 'electrode-item';
-                item.innerHTML = `<span class="electrode-name">${name}</span>`;
-                item.onclick = () => toggleElectrode(name);
-                listContainer.appendChild(item);
+                el.classList.toggle('edit-mode', editMode);
             });
         }
 
-        function createSVG() {
-            if (selectedElectrodes.size === 0) {
-                alert('Please select electrodes');
-                return null;
-            }
-
-            // Get actual dimensions from web display
-            const headContainer = document.getElementById('headContainer');
-            const containerRect = headContainer.getBoundingClientRect();
-            const svgWidth = containerRect.width + 100; // Add margin
-            const svgHeight = containerRect.height + 100; // Minimal margin
-
-            let svg = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
-            svg += '<rect width="100%" height="100%" fill="white"/>';
-
-            // SVG center coordinates
-            const svgCenterX = svgWidth / 2;
-            const svgCenterY = svgHeight / 2;
-
-            // Web head container actual dimensions
-            const headRadius = containerRect.width / 2;
-
-            // Head background circle
-            svg += `<circle cx="${svgCenterX}" cy="${svgCenterY}" r="${headRadius}" fill="white" stroke="black" stroke-width="3"/>`;
-
-            // Nose triangle (same size as web)
-            svg += `<polygon points="${svgCenterX - 45/2},${svgCenterY - headRadius - 10} ${svgCenterX + 45/2},${svgCenterY - headRadius - 10} ${svgCenterX},${svgCenterY - headRadius - 45}" fill="white" stroke="black" stroke-width="6"/>`;
-            svg += `<polygon points="${svgCenterX - 39/2},${svgCenterY - headRadius - 4} ${svgCenterX + 39/2},${svgCenterY - headRadius - 4} ${svgCenterX},${svgCenterY - headRadius - 39}" fill="white"/>`;
-
-            // Ears
-            const earWidth = 35;
-            const earHeight = 70;
-            // Left ear
-            svg += `<rect x="${svgCenterX - headRadius - 38}" y="${svgCenterY - earHeight/2}" width="${earWidth}" height="${earHeight}" fill="white" stroke="black" stroke-width="3" rx="20"/>`;
-            // Right ear
-            svg += `<rect x="${svgCenterX + headRadius + 3}" y="${svgCenterY - earHeight/2}" width="${earWidth}" height="${earHeight}" fill="white" stroke="black" stroke-width="3" rx="20"/>`;
-
-            // Draw only selected electrodes (using web's actual positions)
-            selectedElectrodes.forEach(name => {
-                const electrode = electrodeData.find(e => e.name === name);
-                if (electrode) {
-                    // Same coordinate transformation as web
-                    const scale = 400;
-                    const webX = electrode.x * scale + 350;
-                    const webY = -electrode.y * scale + 350 - 30;
-
-                    // Convert to SVG coordinate system (move Y coordinate up)
-                    const svgX = svgCenterX + (webX - 350);
-                    const svgY = svgCenterY + (webY - 350); // Align accurately to web center
-
-                    // Electrode circle (same size as web)
-                    svg += `<circle cx="${svgX}" cy="${svgY}" r="20" fill="white" stroke="black" stroke-width="3"/>`;
-
-                    // Electrode name (same font size as web)
-                    svg += `<text x="${svgX}" y="${svgY + 4}" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">${electrode.name}</text>`;
-                }
+        function setupSearch() {
+            const searchBox = document.getElementById('electrode-search');
+            searchBox.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.electrode').forEach(electrode => {
+                    const matches = electrode.textContent.toLowerCase().includes(searchTerm);
+                    electrode.style.opacity = matches || searchTerm === '' ? '1' : '0.3';
+                });
             });
-
-            svg += '</svg>';
-            return svg;
         }
 
-        function saveSVG() {
-            const svgContent = createSVG();
-            if (!svgContent) return;
-
-            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        function exportSVG() {
+            const svg = createExportSVG();
+            const blob = new Blob([svg], {type: 'image/svg+xml'});
             const url = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `EEG_electrode_layout_${selectedElectrodes.size}electrodes_${new Date().toISOString().slice(0,10)}.svg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `electrode_layout_${selectedElectrodes.size}_electrodes_${new Date().toISOString().split('T')[0]}.svg`;
+            a.click();
             URL.revokeObjectURL(url);
-
-            showSuccessMessage('SVG export completed');
         }
 
-        function savePNG() {
-            const svgContent = createSVG();
-            if (!svgContent) return;
-
+        function exportPNG() {
+            const svg = createExportSVG();
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 800;
-            canvas.height = 900;
-
             const img = new Image();
-            const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
+
+            canvas.width = 800;
+            canvas.height = 960;
 
             img.onload = function() {
-                ctx.drawImage(img, 0, 0);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                canvas.toBlob(function(blob) {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `EEG_electrode_layout_${selectedElectrodes.size}electrodes_${new Date().toISOString().slice(0,10)}.png`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(link.href);
-                }, 'image/png');
-
-                URL.revokeObjectURL(url);
-                showSuccessMessage('PNG export completed');
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `electrode_layout_${selectedElectrodes.size}_electrodes_${new Date().toISOString().split('T')[0]}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
             };
 
+            const blob = new Blob([svg], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
             img.src = url;
         }
 
-        // Toggle edit mode
-        function toggleEditMode() {
-            editMode = !editMode;
-            const body = document.body;
-            const button = document.getElementById('editModeButton');
+        function createExportSVG() {
+            let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="500" height="600">`;
 
-            if (editMode) {
-                body.classList.add('edit-mode');
-                button.textContent = 'Edit Mode: ON';
-                button.style.background = '#e74c3c';
-                showMessage('Edit mode is ON. Click electrodes to edit their names.');
-            } else {
-                body.classList.remove('edit-mode');
-                button.textContent = 'Edit Mode: OFF';
-                button.style.background = '#3498db';
-                showMessage('Edit mode is OFF.');
-            }
+            // Head outline
+            svg += `<ellipse cx="250" cy="350" rx="200" ry="240" fill="none" stroke="#34495e" stroke-width="3"/>`;
+            // Nose
+            svg += `<path d="M 250 110 L 240 90 L 260 90 Z" fill="none" stroke="#34495e" stroke-width="2"/>`;
+            // Ears
+            svg += `<circle cx="80" cy="320" r="15" fill="none" stroke="#34495e" stroke-width="2"/>`;
+            svg += `<circle cx="420" cy="320" r="15" fill="none" stroke="#34495e" stroke-width="2"/>`;
+
+            // Electrodes
+            electrodeData.forEach(electrode => {
+                const isSelected = selectedElectrodes.has(electrode.name);
+                const x = (electrode.x + 1) * 250;
+                const y = (electrode.y + 1) * 300;
+                const color = isSelected ? '#e74c3c' : '#ecf0f1';
+                const strokeColor = isSelected ? '#c0392b' : '#34495e';
+                const textColor = isSelected ? 'white' : '#2c3e50';
+
+                svg += `<circle cx="${x}" cy="${y}" r="10" fill="${color}" stroke="${strokeColor}" stroke-width="2"/>`;
+                svg += `<text x="${x}" y="${y + 3}" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="${textColor}">${electrode.name}</text>`;
+            });
+
+            svg += `</svg>`;
+            return svg;
         }
-
-        // Open electrode editor dialog
-        function openElectrodeEditor(electrode) {
-            currentEditingElectrode = electrode;
-
-            const overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            overlay.onclick = closeElectrodeEditor;
-
-            const editor = document.createElement('div');
-            editor.className = 'electrode-editor';
-            editor.innerHTML = `
-                <h3>Edit Electrode Name</h3>
-                <p>Coordinates: (${electrode.x.toFixed(3)}, ${electrode.y.toFixed(3)})</p>
-                <label>Current name:</label>
-                <input type="text" id="electrodeNameInput" value="${electrode.name}" placeholder="Enter electrode name">
-                <div class="electrode-editor-buttons">
-                    <button class="save-btn" onclick="saveElectrodeName()">Save</button>
-                    <button class="cancel-btn" onclick="closeElectrodeEditor()">Cancel</button>
-                </div>
-            `;
-
-            document.body.appendChild(overlay);
-            document.body.appendChild(editor);
-
-            // Focus on input
-            setTimeout(() => {
-                document.getElementById('electrodeNameInput').select();
-            }, 100);
-        }
-
-        // Save electrode name
-        function saveElectrodeName() {
-            if (!currentEditingElectrode) return;
-
-            const newName = document.getElementById('electrodeNameInput').value.trim();
-            if (newName && newName !== currentEditingElectrode.name) {
-                const oldName = currentEditingElectrode.name;
-
-                // Update data
-                currentEditingElectrode.name = newName;
-
-                // Update display
-                const element = document.getElementById(`electrode-${oldName}`);
-                if (element) {
-                    element.id = `electrode-${newName}`;
-                    element.textContent = newName;
-                    element.title = newName;
-                }
-
-                // Update selection set
-                if (selectedElectrodes.has(oldName)) {
-                    selectedElectrodes.delete(oldName);
-                    selectedElectrodes.add(newName);
-                }
-
-                // Update list
-                updateSelectedElectrodesList();
-
-                showMessage(`Electrode name changed from "${oldName}" to "${newName}".`);
-            }
-
-            closeElectrodeEditor();
-        }
-
-        // Close edit dialog
-        function closeElectrodeEditor() {
-            const overlay = document.querySelector('.overlay');
-            const editor = document.querySelector('.electrode-editor');
-            if (overlay) overlay.remove();
-            if (editor) editor.remove();
-            currentEditingElectrode = null;
-        }
-
-        function showMessage(message) {
-            const status = document.getElementById('statusIndicator');
-            status.textContent = message;
-            status.style.background = '#27ae60';
-            setTimeout(() => {
-                status.textContent = 'Select electrodes';
-                status.style.background = '#3498db';
-            }, 3000);
-        }
-
-        function showSuccessMessage(message) {
-            const status = document.getElementById('statusIndicator');
-            status.textContent = message;
-            status.style.background = '#27ae60';
-            setTimeout(() => {
-                status.textContent = 'Select electrodes';
-                status.style.background = '#3498db';
-            }, 3000);
-        }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // ESC key to close edit dialog
-            if (e.key === 'Escape') {
-                closeElectrodeEditor();
-            }
-            // Enter key to save
-            if (e.key === 'Enter' && currentEditingElectrode) {
-                saveElectrodeName();
-            }
-        });
-
-        // Initialize
-        window.onload = function() {
-            initializeApplication();
-        };
     </script>
 </body>
 </html>
