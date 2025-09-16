@@ -756,10 +756,10 @@
                     const svgY = svgCenterY + (webY - 350); // Web上のセンターに正確に合わせる
 
                     // 電極の円（Web上と同じサイズ）
-                    svg += `<circle cx="${svgX}" cy="${svgY}" r="20" fill="white" stroke="black" stroke-width="3"/>`;
+                    svg += `<circle cx="${svgX}" cy="${svgY}" r="24" fill="white" stroke="black" stroke-width="3"/>`;
 
                     // 電極名（Web上と同じフォントサイズ）
-                    svg += `<text x="${svgX}" y="${svgY + 4}" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">${electrode.name}</text>`;
+                    svg += `<text x="${svgX}" y="${svgY}" font-family="Arial" font-size="20" text-anchor="middle" dominant-baseline="central" font-weight="bold">${electrode.name}</text>`;
                 }
             });
 
