@@ -129,8 +129,8 @@
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 45px solid transparent;
-            border-right: 45px solid transparent;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
             border-bottom: 90px solid black;
             z-index: 1;
         }
@@ -139,11 +139,11 @@
             content: '';
             position: absolute;
             top: 6px;
-            left: -39px;
+            left: -54px;
             width: 0;
             height: 0;
-            border-left: 39px solid transparent;
-            border-right: 39px solid transparent;
+            border-left: 54px solid transparent;
+            border-right: 54px solid transparent;
             border-bottom: 78px solid white;
         }
 
@@ -479,7 +479,7 @@
     <div class="pdf-container" id="pdfContainer">
         <div class="head-background" style="width: 100%; height: 100%; border-radius: 50%; background: white; position: absolute;"></div>
         <div class="head-border" style="width: 100%; height: 100%; border: 3px solid black; border-radius: 50%; background: transparent; position: absolute;"></div>
-        <div class="nose-marker" style="position: absolute; top: -45px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 45px solid transparent; border-right: 45px solid transparent; border-bottom: 90px solid black;"></div>
+        <div class="nose-marker" style="position: absolute; top: -45px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 60px solid transparent; border-right: 60px solid transparent; border-bottom: 90px solid black;"></div>
         <div class="ear-marker ear-left" style="position: absolute; top: 50%; left: -40px; width: 35px; height: 70px; background: white; border: 3px solid black; border-radius: 20px 0 0 20px; border-right: none; transform: translateY(-50%);"></div>
         <div class="ear-marker ear-right" style="position: absolute; top: 50%; right: -40px; width: 35px; height: 70px; background: white; border: 3px solid black; border-radius: 0 20px 20px 0; border-left: none; transform: translateY(-50%);"></div>
     </div>
@@ -727,12 +727,14 @@
             // Web head container actual dimensions
             const headRadius = containerRect.width / 2;
 
-            // Head background circle
-            svg += `<circle cx="${svgCenterX}" cy="${svgCenterY}" r="${headRadius}" fill="white" stroke="black" stroke-width="3"/>`;
+            // Nose triangle (solid triangle with white inner triangle to create hollow effect) - drawn first (below head)
+            const outerTriangle = `M${svgCenterX - 60/2},${svgCenterY - headRadius + 5} L${svgCenterX + 60/2},${svgCenterY - headRadius + 5} L${svgCenterX},${svgCenterY - headRadius - 30} Z`;
+            svg += `<path d="${outerTriangle}" fill="black"/>`;
+            const innerTriangle = `M${svgCenterX - 54/2},${svgCenterY - headRadius + 11} L${svgCenterX},${svgCenterY - headRadius - 24} L${svgCenterX + 54/2},${svgCenterY - headRadius + 11} Z`;
+            svg += `<path d="${innerTriangle}" fill="white"/>`;
 
-            // Nose triangle (same size as web)
-            svg += `<polygon points="${svgCenterX - 45/2},${svgCenterY - headRadius - 10} ${svgCenterX + 45/2},${svgCenterY - headRadius - 10} ${svgCenterX},${svgCenterY - headRadius - 45}" fill="white" stroke="black" stroke-width="6"/>`;
-            svg += `<polygon points="${svgCenterX - 39/2},${svgCenterY - headRadius - 4} ${svgCenterX + 39/2},${svgCenterY - headRadius - 4} ${svgCenterX},${svgCenterY - headRadius - 39}" fill="white"/>`;
+            // Head background circle - drawn after nose (above nose)
+            svg += `<circle cx="${svgCenterX}" cy="${svgCenterY}" r="${headRadius}" fill="white" stroke="black" stroke-width="3"/>`;
 
             // Ears
             const earWidth = 35;
