@@ -19,8 +19,7 @@ A standalone HTML tool for creating custom EEG electrode layouts using the inter
 
 **Just double-click the HTML file** - works instantly:
 
-- `eeg_electrode_selector_main_en.html` - **Main English version** (recommended)
-- `eeg_electrode_selector_main_jp.html` - Japanese version
+- `index.html` - **Main version** (recommended)
 - `eeg_electrode_selector_archive.html` - Archive version
 
 ### Method 2: Using VSCode Live Server (Optional)
@@ -34,16 +33,14 @@ For development workflow:
 
 | File | Description | Language |
 |------|-------------|----------|
-| `eeg_electrode_selector_main_en.html` | **Main version** with all features | English |
-| `eeg_electrode_selector_main_jp.html` | Full-featured version | Japanese |
+| `index.html` | **Main version** with all features | English |
 | `eeg_electrode_selector_archive.html` | Archive/backup version | Mixed |
-| `electrode_correction_list_new.json` | Electrode coordinate data | - |
 
 ## How to Use
 
 ### Step-by-Step Guide
 
-1. **Open the tool** - Double-click `eeg_electrode_selector_main_en.html`
+1. **Open the tool** - Double-click `index.html`
 2. **Select electrodes** - Click individual electrodes on the head map
 3. **Use presets** - Or click preset buttons for common configurations
 4. **Export layout** - Click "Export SVG" or "Export PNG" to save
@@ -162,4 +159,4 @@ This project is open source and available for academic and research use.
 
 ---
 
-**💡 Pro tip:** Bookmark `eeg_electrode_selector_main_en.html` in your browser for instant access!
+**💡 Pro tip:** Bookmark `index.html` in your browser for instant access!
