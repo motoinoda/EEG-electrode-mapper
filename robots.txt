@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://noda-ai.github.io/EEG-electrode-mapper/sitemap.xml
+
+# Additional crawl directives
+Crawl-delay: 1
